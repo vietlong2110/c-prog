@@ -5,7 +5,8 @@
 
 
 void assert_card_valid(card_t c) {
-  assert(c.value <= VALUE_ACE && c.value >= 2 && c.suit >= 0 && c.suit < 4);
+  assert(c.value <= VALUE_ACE && c.value >= 2);
+  assert(c.suit >= SPADES && c.suit <= CLUBS);
 }
 
 const char * ranking_to_string(hand_ranking_t r) {
@@ -24,7 +25,7 @@ const char * ranking_to_string(hand_ranking_t r) {
 
 char value_letter(card_t c) {
   if (c.value <= 9 && c.value >= 2)
-    return c.value - '0';
+    return '0' + c.value;
   if (c.value == 10)
     return '0';
   switch(c.value) {
@@ -51,15 +52,33 @@ void print_card(card_t c) {
 
 card_t card_from_letters(char value_let, char suit_let) {
   card_t temp;
-  temp.value = value_let;
-  temp.suit = suit_let;
+  if (value_let >= '2' && value_let <= '9')
+    temp.value = value_let - '0';
+  if (value_let == '0')
+    temp.value = 10;
+  if (value_let == 'J')
+    temp.value = VALUE_JACK;
+  if (value_let == 'Q')
+    temp.value = VALUE_QUEEN;
+  if (value_let == 'K')
+    temp.value = VALUE_KING;
+  if (value_let == 'A')
+    temp.value = VALUE_ACE;
+  if (suit_let == 's')
+    temp.suit = SPADES;
+  if (suit_let == 'h')
+    temp.suit = HEARTS;
+  if (suit_let == 'd')
+    temp.suit = DIAMONDS;
+  if (suit_let == 'c')
+    temp.suit = CLUBS;
   assert_card_valid(temp);
   return temp;
 }
 
 card_t card_from_num(unsigned c) {
   card_t temp;
-  temp.value = c % 13;
+  temp.value = c % 13 + 2;
   temp.suit = c / 13;
   assert_card_valid(temp);
   return temp;
